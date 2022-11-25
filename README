@@ -1,0 +1,3 @@
+#+title: ranger-rclone-copy
+
+Ranger Plugin to easily copy files to a remote location via the rclone copy command.
