@@ -21,4 +21,7 @@ is automatically created when a bookmark is added for the first time.
 
 * Installation
 
-Simply place ~ranger-rclone-copy.py~ in the plugins directory in ~~/.config/ranger/plugins~.
+#+begin_src
+cd ~/.config/ranger/plugins
+git clone https://github.com/einsiedlerspiel/ranger-rclone-copy.git
+#+end_src
