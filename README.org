@@ -19,6 +19,11 @@ is automatically created when a bookmark is added for the first time.
 
 ~:rclone_copy~ has rudimentary tab completion for bookmarked targets.
 
+* Dependencies
+
+- [[https://github.com/ranger/ranger][ranger]]
+- [[https://rclone.org/][rclone]]
+
 * Installation
 
 #+begin_src
