@@ -53,10 +53,14 @@ class rclone_targets(FileManagerAware):
 
     def get(self, key):
         """returns target to a given key"""
-        for row in self.targets:
-            if key in row[0]:
-                return(row[1])
-        return key
+        if key:
+            for row in self.targets:
+                if key in row[0]:
+                    return(row[1])
+                return key
+        else:
+            return False
+
 
 
     def remove(self, key):
@@ -77,6 +81,7 @@ class rclone_targets(FileManagerAware):
 
 # instantiate rclone_target
 rclone_target = rclone_targets()
+
 
 class remove_rclone_target(Command):
 
@@ -125,28 +130,35 @@ class change_rclone_target(Command):
             self.fm.notify('Rclone target changed')
 
 
-class rclone_copy(Command):
+class rclone(Command):
+
 
     def execute(self):
-        if not self.arg(1):
+
+        command_list = ["copy", "copyto", "move", "moveto"]
+        command = self.arg(1)
+        files = self.fm.thisdir.get_selection()
+        target = rclone_target.get(self.arg(2))
+
+        if not command in command_list:
+            self.fm.notify("Missing command argument", bad=True)
+            return
+        elif not target:
             self.fm.notify('Missing target argument', bad=True)
             return
-        else:
-            # we don't need to check id self.arg(1) is a valid key because if
-            # it's not rclone_target.get() just returns it. So we can pass it
-            # along to rclone.
-            target = rclone_target.get(self.arg(1))
-
-            if not self.fm.thisdir.get_selection():
+        elif not files:
                 self.fm.notify('No files to copy', bad=True)
-            else:
-                for file in self.fm.thisdir.get_selection():
-                    descr = "copying " + file.path + " to " + target
-                    obj = CommandLoader(args=["rclone", "copy",
-                                              "--no-traverse", file.path,
-                                              target], descr=descr)
-                    self.fm.loader.add(obj)
+        else:
+            for file in files:
+                descr = "rclone " + command + file.path + " to " + target
+                obj = CommandLoader(args=["rclone", command,
+                                          "--no-traverse", file.path,
+                                          target], descr=descr)
+                self.fm.loader.add(obj)
+        return
 
 
     def tab(self, tabnum):
-        return ["rclone_copy " + target for target in rclone_target.list_keys()]
+        return ["rclone" + " " +
+                self.arg(1) + " " +
+                target for target in rclone_target.list_keys()]
