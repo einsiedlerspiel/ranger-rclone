@@ -18,10 +18,13 @@ Available ~<commands>~ are:
 ~<rclone-target>~ can be either a destination as you would provide to ~rclone copy~
 directly or the key of a bookmarked destination.
 
-Bookmarked destinations are a pair of a key and a destination. Bookmarks can be
-defined via ~:add_rclone_target <key> <target>~, removed via ~:remove_rclone_target
-<key>~ and the target to a key can be changed with ~:change_rclone_target <key>
-<new-target>~.
+** Bookmarks
+
+Bookmarked destinations are a pair of a key and a destination.
+
+- add a bookmark :: ~:add_rclone_target <key> <target>~
+- remove a bookmark :: ~:remove_rclone_target <key>~
+- change target to existing key :: ~:change_rclone_target <key> <new-target>~
 
 The bookmarked targets are stored in a file in the ranger config directory that
 is automatically created when a bookmark is added for the first time.
