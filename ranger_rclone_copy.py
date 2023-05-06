@@ -147,7 +147,8 @@ class rclone(Command):
             self.fm.notify('Missing target argument', bad=True)
             return
         elif not files:
-                self.fm.notify('No files to copy', bad=True)
+            self.fm.notify('No files to copy', bad=True)
+            return
         else:
             for file in files:
                 descr = "rclone " + command + file.path + " to " + target
