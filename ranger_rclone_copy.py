@@ -140,6 +140,11 @@ class rclone(Command):
         files = self.fm.thisdir.get_selection()
         target = rclone_target.get(self.arg(2))
 
+        if self.arg(3):
+            # This allows to copy the files into a subfolder of target, even
+            # when using a bookmark.
+            target = target + "/" + self.arg(3)
+
         if not command in command_list:
             self.fm.notify("Missing command argument", bad=True)
             return

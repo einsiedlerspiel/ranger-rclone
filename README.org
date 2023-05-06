@@ -5,7 +5,7 @@ Ranger Plugin to easily copy or move files to a remote location with rclone.
 * Usage
 
 #+begin_src
-:rclone <command> <rclone-target>
+:rclone <command> <rclone-target> <dir>
 #+end_src
 
 Available ~<commands>~ are:
@@ -17,6 +17,10 @@ Available ~<commands>~ are:
 
 ~<rclone-target>~ can be either a destination as you would provide to ~rclone copy~
 directly or the key of a bookmarked destination.
+
+~<dir>~ is an _optional_ argument that is appended to ~<rclone-target>~ after bookmark
+resolution. This is useful to specify a subdirectory of a bookmark as
+destination.
 
 ** Bookmarks
 
