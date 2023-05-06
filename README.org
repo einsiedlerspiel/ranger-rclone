@@ -1,11 +1,20 @@
 #+title: ranger-rclone-copy
 
-Ranger Plugin to easily copy files to a remote location via the rclone copy command.
+Ranger Plugin to easily copy or move files to a remote location with rclone.
 
 * Usage
 
-Use ~:rclone_copy <rclone-target>~ to copy the marked files in the current working
-directory to ~<rclone-target>~. The command behaves like [[https://rclone.org/commands/rclone_copy][rclone copy.]]
+#+begin_src
+:rclone <command> <rclone-target>
+#+end_src
+
+Available ~<commands>~ are:
+
+- ~copy~ :: https://rclone.org/commands/rclone_copy/
+- ~copyto~ :: https://rclone.org/commands/rclone_copyto/
+- ~move~ :: https://rclone.org/commands/rclone_move/
+- ~moveto~ :: https://rclone.org/commands/rclone_moveto/
+
 ~<rclone-target>~ can be either a destination as you would provide to ~rclone copy~
 directly or the key of a bookmarked destination.
 
@@ -17,7 +26,7 @@ defined via ~:add_rclone_target <key> <target>~, removed via ~:remove_rclone_tar
 The bookmarked targets are stored in a file in the ranger config directory that
 is automatically created when a bookmark is added for the first time.
 
-~:rclone_copy~ has rudimentary tab completion for bookmarked targets.
+There is rudimentary tab completion for bookmarked targets.
 
 * Dependencies
 
