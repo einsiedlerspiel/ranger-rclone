@@ -19,77 +19,36 @@ from ranger.core.shared import FileManagerAware
 from os.path import isfile
 import csv
 
-class rclone_targets(FileManagerAware):
+class rclone_targets_obj(FileManagerAware):
     """Stores rclone_targets, writes them into a file in the ranger config
     directory, is initialized at startup below."""
     def __init__(self):
         self.targets_file = self.fm.confpath("rclone_targets")
-        self.targets = list()
+        self.dictionary = dict()
 
         if isfile(self.targets_file):
             with open(self.targets_file, "r", newline='') as csvfile:
                 targets_reader = csv.reader(csvfile, delimiter=',')
-                for row in targets_reader:
-                    self.targets.append(row)
-
-
-    def list_targets(self):
-        """returns list of key target pairs"""
-        return self.targets
-
-
-    def list_keys(self):
-        """returns list of only the keys of all targets"""
-        keylist = list()
-        for x in self.targets:
-            keylist.append(x[0])
-        return keylist
-
-
-    def add(self, key, target):
-        """adds key target pair to rclone_targets"""
-        self.targets.append([key, target])
-
-
-    def get(self, key):
-        """returns target to a given key"""
-        if key:
-            for row in self.targets:
-                if key in row[0]:
-                    return(row[1])
-                return key
-        else:
-            return False
-
-
-
-    def remove(self, key):
-        """removes key target pair for a given key from rclone_targets"""
-        for row in self.targets:
-            if row[0] == key:
-                self.targets.remove(row)
-                return True
-        return False
-
+                self.dictionary = dict(targets_reader)
 
     def update_file(self):
-        """writes rclone_targets into file"""
+        """writes rclone_targets.dictionary into file"""
         with open(self.targets_file,'w', newline='') as csvfile:
             targets_writer = csv.writer(csvfile, delimiter=',')
-            targets_writer.writerows(self.targets)
+            targets_writer.writerows(self.dictionary.items())
 
 
 # instantiate rclone_target
-rclone_target = rclone_targets()
-
+rctarget = rclone_targets_obj()
 
 class remove_rclone_target(Command):
 
     def execute(self):
         key = self.arg(1)
 
-        if rclone_target.remove(key):
-            rclone_target.update_file()
+        if key in rctarget.dictionary:
+            rctarget.dictionary.pop(key)
+            rctarget.update_file()
             self.fm.notify('Rclone target removed')
         else:
             self.fm.notify('Rclone target does not exist', bad=True)
@@ -104,12 +63,12 @@ class add_rclone_target(Command):
         if key == target:
             self.fm.notify('Keyword and Target are identical', bad=True)
             return
-        elif rclone_target.get(key) != key:
+        elif key in rctarget.dictionary:
             self.fm.notify('Keyword already exists', bad=True)
             return
         else:
-            rclone_target.add(key, target)
-            rclone_target.update_file()
+            rctarget.dictionary[key] = target
+            rctarget.update_file()
             self.fm.notify('Rclone target added')
 
 
@@ -122,11 +81,12 @@ class change_rclone_target(Command):
         if key == target:
             self.fm.notify('Keyword and Target are identical', bad=True)
             return
+        elif key not in rctarget.dictionary:
+            self.fm.notify('Keyword does not exist yet, use :add_rclone_target',
+                           bad=True)
         else:
-            rclone_target.remove(key)
-            rclone_target.add(key, target)
-
-            rclone_target.update_file()
+            rctarget.dictionary[key]=target
+            rctarget.update_file()
             self.fm.notify('Rclone target changed')
 
 
@@ -138,7 +98,11 @@ class rclone(Command):
         command_list = ["copy", "copyto", "move", "moveto"]
         command = self.arg(1)
         files = self.fm.thisdir.get_selection()
-        target = rclone_target.get(self.arg(2))
+
+        if self.arg(2) in rctarget.dictionary:
+            target = rctarget.dictionary[self.arg(2)]
+        else:
+            target = self.arg(2)
 
         if self.arg(3):
             # This allows to copy the files into a subfolder of target, even
@@ -163,8 +127,7 @@ class rclone(Command):
                 self.fm.loader.add(obj)
         return
 
-
     def tab(self, tabnum):
         return ["rclone" + " " +
                 self.arg(1) + " " +
-                target for target in rclone_target.list_keys()]
+                target for target in rctarget.dictionary]
