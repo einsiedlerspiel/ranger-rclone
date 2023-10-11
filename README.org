@@ -19,7 +19,7 @@ Available ~<commands>~ are:
 - ~moveto~ :: https://rclone.org/commands/rclone_moveto/
 
 ~<rclone-target>~ can be either a destination as you would provide to ~rclone copy~
-directly or the key of a [[Bookmarks][bookmarked destination]].
+directly or the key of a bookmarked destination.
 
 ~<dir>~ is an _optional_ argument that is appended to ~<rclone-target>~ after bookmark
 resolution. This is useful to specify a subdirectory of a bookmark as
@@ -35,7 +35,7 @@ mostly because ~sync~ riskier to use without the possiblity of dry-running it th
 actual path.
 
 If you really want to use ~sync~ through this interface, you can add sync to the
-available commands by adding it to [[file:ranger_rclone.py::command_list = \["copy", "copyto", "move", "moveto"\]][the ~command_list~ variable]] in the definition
+available commands by adding it to the ~command_list~ variable in the definition
 of the ~rclone~ command. Autocomplete will work.
 
 I might add some form of support for ~sync~ at some point.
