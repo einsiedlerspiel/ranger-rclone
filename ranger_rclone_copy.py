@@ -122,7 +122,7 @@ class rclone(Command):
             for file in files:
                 descr = "rclone " + command + file.path + " to " + target
                 obj = CommandLoader(args=["rclone", command,
-                                          "--no-traverse", file.path,
+                                          "--no-traverse", "-q", file.path,
                                           target], descr=descr)
                 self.fm.loader.add(obj)
         return
