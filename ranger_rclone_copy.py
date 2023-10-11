@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <https://www.gnu.org/licenses/>.
 
+import ranger.api
 from ranger.api.commands import Command
 from ranger.core.loader import CommandLoader
 from ranger.core.shared import FileManagerAware
@@ -39,19 +40,26 @@ class rclone_targets_obj(FileManagerAware):
 
 
 # instantiate rclone_target
-rctarget = rclone_targets_obj()
+HOOK_INIT_OLD = ranger.api.hook_init
+def hook_init(fm):
+    fm.rclone_targets = rclone_targets_obj()
+    return HOOK_INIT_OLD(fm)
+ranger.api.hook_init = hook_init
+
 
 class remove_rclone_target(Command):
 
     def execute(self):
         key = self.arg(1)
 
-        if key in rctarget.dictionary:
-            rctarget.dictionary.pop(key)
-            rctarget.update_file()
+        if key in self.fm.rclone_targets.dictionary:
+            self.fm.rclone_targets.dictionary.pop(key)
+            self.fm.rclone_targets.update_file()
             self.fm.notify('Rclone target removed')
+            return
         else:
             self.fm.notify('Rclone target does not exist', bad=True)
+            return
 
 
 class add_rclone_target(Command):
@@ -63,13 +71,14 @@ class add_rclone_target(Command):
         if key == target:
             self.fm.notify('Keyword and Target are identical', bad=True)
             return
-        elif key in rctarget.dictionary:
+        elif key in self.fm.rclone_targets.dictionary:
             self.fm.notify('Keyword already exists', bad=True)
             return
         else:
-            rctarget.dictionary[key] = target
-            rctarget.update_file()
+            self.fm.rclone_targets.dictionary[key] = target
+            self.fm.rclone_targets.update_file()
             self.fm.notify('Rclone target added')
+            return
 
 
 class change_rclone_target(Command):
@@ -81,13 +90,15 @@ class change_rclone_target(Command):
         if key == target:
             self.fm.notify('Keyword and Target are identical', bad=True)
             return
-        elif key not in rctarget.dictionary:
+        elif key not in self.fm.rclone_targets.dictionary:
             self.fm.notify('Keyword does not exist yet, use :add_rclone_target',
                            bad=True)
+            return
         else:
-            rctarget.dictionary[key]=target
-            rctarget.update_file()
+            self.fm.rclone_targets.dictionary[key]=target
+            self.fm.rclone_targets.update_file()
             self.fm.notify('Rclone target changed')
+            return
 
 
 class rclone(Command):
@@ -99,8 +110,8 @@ class rclone(Command):
         command = self.arg(1)
         files = self.fm.thisdir.get_selection()
 
-        if self.arg(2) in rctarget.dictionary:
-            target = rctarget.dictionary[self.arg(2)]
+        if self.arg(2) in self.fm.rclone_targets.dictionary:
+            target = self.fm.rclone_targets.dictionary[self.arg(2)]
         else:
             target = self.arg(2)
 
@@ -130,4 +141,4 @@ class rclone(Command):
     def tab(self, tabnum):
         return ["rclone" + " " +
                 self.arg(1) + " " +
-                target for target in rctarget.dictionary]
+                target for target in self.fm.rclone_targets.dictionary]
