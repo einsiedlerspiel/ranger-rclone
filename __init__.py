@@ -1,1 +1,1 @@
-from .ranger_rclone_copy import *
+from .ranger_rclone import *

@@ -1,4 +1,4 @@
-#+title: ranger-rclone-copy
+#+title: ranger-rclone
 
 Ranger Plugin to easily copy or move files to a remote location with rclone.
 
@@ -45,5 +45,5 @@ is automatically created when a bookmark is added for the first time.
 
 #+begin_src
 cd ~/.config/ranger/plugins
-git clone https://github.com/einsiedlerspiel/ranger-rclone-copy.git
+git clone https://github.com/einsiedlerspiel/ranger-rclone.git
 #+end_src
