@@ -103,10 +103,10 @@ class change_rclone_target(Command):
 
 class rclone(Command):
 
+    command_list = ["copy", "copyto", "move", "moveto"]
 
     def execute(self):
 
-        command_list = ["copy", "copyto", "move", "moveto"]
         command = self.arg(1)
         files = self.fm.thisdir.get_selection()
 
@@ -120,7 +120,7 @@ class rclone(Command):
             # when using a bookmark.
             target = target + "/" + self.arg(3)
 
-        if not command in command_list:
+        if not command in self.command_list:
             self.fm.notify("Missing command argument", bad=True)
             return
         elif not target:
@@ -139,6 +139,17 @@ class rclone(Command):
         return
 
     def tab(self, tabnum):
-        return ["rclone" + " " +
-                self.arg(1) + " " +
-                target for target in self.fm.rclone_targets.dictionary]
+
+        def match_fn(argnum, options):
+            if self.arg(argnum):
+                return filter(lambda x: (self.arg(argnum) in x), options)
+            else:
+                return options
+
+        def complete_fn(argnum, options):
+            return (self.start(argnum) + o for o in match_fn(argnum, options))
+
+        if self.arg(1) in self.command_list:
+            return complete_fn(2, self.fm.rclone_targets.dictionary)
+        else:
+            return complete_fn(1, self.command_list)

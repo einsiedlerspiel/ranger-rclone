@@ -22,6 +22,8 @@ directly or the key of a bookmarked destination.
 resolution. This is useful to specify a subdirectory of a bookmark as
 destination.
 
+Tab completion for ~<command>~ and ~<rclone-target>~ (from bookmarks) is implemented.
+
 ** Bookmarks
 
 Bookmarked destinations are a pair of a key and a destination.
@@ -33,7 +35,6 @@ Bookmarked destinations are a pair of a key and a destination.
 The bookmarked targets are stored in a file in the ranger config directory that
 is automatically created when a bookmark is added for the first time.
 
-There is rudimentary tab completion for bookmarked targets.
 
 * Dependencies
 
