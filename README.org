@@ -2,6 +2,9 @@
 
 Ranger Plugin to easily copy or move files to a remote location with rclone.
 
+At the moment it's only supported to copy/move files from ranger /to/ a remote,
+not the other way around.
+
 * Usage
 
 #+begin_src
@@ -16,13 +19,26 @@ Available ~<commands>~ are:
 - ~moveto~ :: https://rclone.org/commands/rclone_moveto/
 
 ~<rclone-target>~ can be either a destination as you would provide to ~rclone copy~
-directly or the key of a bookmarked destination.
+directly or the key of a [[Bookmarks][bookmarked destination]].
 
 ~<dir>~ is an _optional_ argument that is appended to ~<rclone-target>~ after bookmark
 resolution. This is useful to specify a subdirectory of a bookmark as
 destination.
 
 Tab completion for ~<command>~ and ~<rclone-target>~ (from bookmarks) is implemented.
+
+** A note on ~rclone sync~
+
+~rclone sync~ is not by default available through this plugin. I made this choice
+mostly because ~sync~ riskier to use without the possiblity of dry-running it than
+~copy~ and ~move~ are, especially on bookmarked locations where you don't see the
+actual path.
+
+If you really want to use ~sync~ through this interface, you can add sync to the
+available commands by adding it to [[file:ranger_rclone.py::command_list = \["copy", "copyto", "move", "moveto"\]][the ~command_list~ variable]] in the definition
+of the ~rclone~ command. Autocomplete will work.
+
+I might add some form of support for ~sync~ at some point.
 
 ** Bookmarks
 
@@ -40,7 +56,7 @@ is automatically created when a bookmark is added for the first time.
 
 - [[https://github.com/ranger/ranger][ranger]]
 - [[https://rclone.org/][rclone]]
-
+  
 * Installation
 
 #+begin_src
